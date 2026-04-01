@@ -95,13 +95,13 @@ export function AllocationTab() {
   return (
     <div className="space-y-6">
       {/* 2x2 Donut grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <Card className="p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4">
           <ChartErrorBoundary>
             <DonutChart data={data.assetClass} title="Asset Class" />
           </ChartErrorBoundary>
         </Card>
-        <Card className="p-4">
+        <Card className="p-3 sm:p-4">
           <ChartErrorBoundary>
             <DonutChart
               data={data.marketCap.filter((d) => d.value > 0)}
@@ -109,12 +109,12 @@ export function AllocationTab() {
             />
           </ChartErrorBoundary>
         </Card>
-        <Card className="p-4">
+        <Card className="p-3 sm:p-4">
           <ChartErrorBoundary>
             <DonutChart data={data.fundHouse} title="Fund House" />
           </ChartErrorBoundary>
         </Card>
-        <Card className="p-4">
+        <Card className="p-3 sm:p-4">
           <div className="text-sm font-medium text-muted-foreground mb-3">Equity vs Others</div>
           <ChartErrorBoundary>
             <DonutChart
@@ -136,7 +136,7 @@ export function AllocationTab() {
         </CardHeader>
         <CardContent>
           <ChartErrorBoundary fallbackTitle="Treemap failed to render">
-            <ResponsiveContainer width="100%" height={320}>
+            <ResponsiveContainer width="100%" height={typeof window !== "undefined" && window.innerWidth < 640 ? 220 : 320}>
               <Treemap
                 data={data.treemap}
                 dataKey="value"

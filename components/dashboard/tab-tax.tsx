@@ -92,14 +92,13 @@ export function TaxTab() {
     <div className="space-y-6">
       {/* Rate info banner */}
       <div className="flex items-start gap-2 p-3 bg-secondary/60 rounded-lg text-xs text-muted-foreground border border-border">
-        <Info className="w-4 h-4 flex-shrink-0 mt-0.5 text-primary" />
+        <Info className="w-4 h-4 shrink-0 mt-0.5 text-primary" />
         <div>
-          STCG (held &lt;1yr): {data.constants.stcgRate}% · LTCG (held ≥1yr): {data.constants.ltcgRate}% above ₹{formatCurrency(data.constants.ltcgExemption)} exemption.
-          FY 2024–25 rates.
+          STCG (held &lt;1yr): {data.constants.stcgRate}% · LTCG (held ≥1yr): {data.constants.ltcgRate}% above ₹{formatCurrency(data.constants.ltcgExemption)} exemption. FY 2024–25 rates.
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         {/* Realised */}
         <Card>
           <CardHeader>
@@ -170,15 +169,15 @@ export function TaxTab() {
               {data.taxHarvestOpportunities.map((opp) => (
                 <div
                   key={opp.amfiCode}
-                  className="flex items-start justify-between p-3 bg-secondary/60 rounded-lg border border-border"
+                  className="flex items-start justify-between gap-3 p-3 bg-secondary/60 rounded-lg border border-border"
                 >
-                  <div>
-                    <p className="text-sm font-medium leading-tight">{opp.fundName}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium leading-tight line-clamp-2">{opp.fundName}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      Current value: {formatCurrency(opp.currentValue)}
+                      Value: {formatCurrency(opp.currentValue)}
                     </p>
                   </div>
-                  <div className="text-right flex-shrink-0 ml-4">
+                  <div className="text-right shrink-0">
                     <p className="text-sm font-semibold text-red-400">
                       {formatCurrency(opp.unrealisedLoss)}
                     </p>

@@ -68,73 +68,61 @@ export function OverviewTab({ summary, summaryLoading }: OverviewTabProps) {
         </CardHeader>
         <CardContent>
           <ChartErrorBoundary fallbackTitle="Timeseries chart failed">
-            <PortfolioTimeseries data={timeseries} loading={loading} />
+            <div className="h-52 sm:h-80">
+              <PortfolioTimeseries data={timeseries} loading={loading} />
+            </div>
           </ChartErrorBoundary>
         </CardContent>
       </Card>
 
       {/* Returns breakdown */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="p-5">
-          <p className="text-sm text-muted-foreground mb-1">Absolute Return</p>
+      <div className="grid grid-cols-1 xs:grid-cols-3 sm:grid-cols-3 gap-3 sm:gap-4">
+        <Card className="p-4 sm:p-5">
+          <p className="text-xs sm:text-sm text-muted-foreground mb-1">Absolute Return</p>
           {summaryLoading ? (
-            <Skeleton className="h-8 w-32 mt-1" />
+            <Skeleton className="h-7 w-28 mt-1" />
           ) : (
             <>
-              <p
-                className={`text-2xl font-bold ${
-                  (absoluteReturn ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"
-                }`}
-              >
+              <p className={`text-xl sm:text-2xl font-bold ${(absoluteReturn ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                 {absoluteReturn !== null ? formatPercent(absoluteReturn) : "—"}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {summary ? formatCurrency(summary.totalReturns) : "—"} total gain/loss
+                {summary ? formatCurrency(summary.totalReturns) : "—"} total
               </p>
             </>
           )}
         </Card>
 
-        <Card className="p-5">
-          <p className="text-sm text-muted-foreground mb-1">
+        <Card className="p-4 sm:p-5">
+          <p className="text-xs sm:text-sm text-muted-foreground mb-1">
             CAGR {holdingYears > 0 ? `(${holdingYears}Y)` : ""}
           </p>
           {summaryLoading ? (
-            <Skeleton className="h-8 w-32 mt-1" />
+            <Skeleton className="h-7 w-28 mt-1" />
           ) : (
             <>
-              <p
-                className={`text-2xl font-bold ${
-                  (cagr ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"
-                }`}
-              >
+              <p className={`text-xl sm:text-2xl font-bold ${(cagr ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                 {cagr !== null && holdingYears >= 1 ? formatPercent(cagr) : "—"}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {holdingYears < 1 ? "CAGR requires 1+ year" : "Compounded annual"}
+                {holdingYears < 1 ? "Needs 1+ year" : "Compounded annual"}
               </p>
             </>
           )}
         </Card>
 
-        <Card className="p-5">
-          <p className="text-sm text-muted-foreground mb-1">XIRR</p>
+        <Card className="p-4 sm:p-5">
+          <p className="text-xs sm:text-sm text-muted-foreground mb-1">XIRR</p>
           {summaryLoading ? (
-            <Skeleton className="h-8 w-32 mt-1" />
+            <Skeleton className="h-7 w-28 mt-1" />
           ) : (
             <>
-              <p
-                className={`text-2xl font-bold ${
-                  (summary?.xirr ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"
-                }`}
-              >
+              <p className={`text-xl sm:text-2xl font-bold ${(summary?.xirr ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                 {summary?.xirr !== null && summary?.xirr !== undefined
                   ? `${summary.xirr.toFixed(1)}% p.a.`
                   : "—"}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Extended IRR (time-weighted)
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">Time-weighted IRR</p>
             </>
           )}
         </Card>

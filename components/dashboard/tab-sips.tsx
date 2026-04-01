@@ -174,7 +174,7 @@ export function SIPsTab() {
   return (
     <div className="space-y-6">
       {sips.length === 0 ? (
-        <Card className="p-12 text-center text-muted-foreground">
+        <Card className="p-8 sm:p-12 text-center text-muted-foreground text-sm">
           No active SIPs detected. SIPs are identified when a fund has 3+ purchases on the same day each month.
         </Card>
       ) : (

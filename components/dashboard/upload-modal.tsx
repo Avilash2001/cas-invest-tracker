@@ -88,7 +88,7 @@ export function UploadModal({ open, onClose, onSuccess }: UploadModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="w-[calc(100vw-32px)] sm:max-w-md rounded-xl">
         <DialogHeader>
           <DialogTitle>Upload CAS Statement</DialogTitle>
           <DialogDescription>
@@ -101,7 +101,7 @@ export function UploadModal({ open, onClose, onSuccess }: UploadModalProps) {
           <div
             {...getRootProps()}
             className={cn(
-              "border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors",
+              "border-2 border-dashed rounded-xl p-5 sm:p-8 text-center cursor-pointer transition-colors",
               isDragActive
                 ? "border-primary bg-primary/5"
                 : "border-border hover:border-primary/50 hover:bg-secondary/50"

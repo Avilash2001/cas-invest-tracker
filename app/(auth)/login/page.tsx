@@ -54,7 +54,7 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-card border border-border rounded-2xl p-8 shadow-2xl">
+        <div className="bg-card border border-border rounded-2xl p-5 sm:p-8 shadow-2xl">
           <h2 className="text-2xl font-semibold text-foreground mb-1">Welcome back</h2>
           <p className="text-muted-foreground text-sm mb-6">
             Sign in to access your portfolio

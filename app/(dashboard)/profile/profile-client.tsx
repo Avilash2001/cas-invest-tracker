@@ -186,7 +186,7 @@ export function ProfileClient({ userName, userEmail }: ProfileClientProps) {
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-4 py-10 space-y-6">
+      <main className="max-w-2xl mx-auto px-4 py-6 sm:py-10 space-y-4 sm:space-y-6">
         {/* Page title */}
         <div>
           <h1 className="text-2xl font-bold">Profile Settings</h1>
@@ -194,7 +194,7 @@ export function ProfileClient({ userName, userEmail }: ProfileClientProps) {
         </div>
 
         {/* Account info card */}
-        <div className="rounded-xl border border-border bg-card p-6">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-xl font-bold text-white shrink-0">
               {userName?.[0]?.toUpperCase() ?? "A"}
@@ -213,7 +213,7 @@ export function ProfileClient({ userName, userEmail }: ProfileClientProps) {
         </div>
 
         {/* Change email */}
-        <div className="rounded-xl border border-border bg-card p-6 space-y-5">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-6 space-y-4 sm:space-y-5">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-indigo-500/10 rounded-lg flex items-center justify-center">
               <Mail className="w-4 h-4 text-indigo-400" />
@@ -257,7 +257,7 @@ export function ProfileClient({ userName, userEmail }: ProfileClientProps) {
         </div>
 
         {/* Change password */}
-        <div className="rounded-xl border border-border bg-card p-6 space-y-5">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-6 space-y-4 sm:space-y-5">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-purple-500/10 rounded-lg flex items-center justify-center">
               <Lock className="w-4 h-4 text-purple-400" />

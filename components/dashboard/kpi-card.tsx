@@ -38,26 +38,26 @@ export function KPICard({
 
   if (loading) {
     return (
-      <Card className="p-6 flex flex-col gap-3">
+      <Card className="p-4 sm:p-6 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-8 w-8 rounded-lg" />
         </div>
-        <Skeleton className="h-8 w-36" />
+        <Skeleton className="h-7 w-36" />
         <Skeleton className="h-3 w-20" />
       </Card>
     );
   }
 
   return (
-    <Card className="p-6 flex flex-col gap-2">
+    <Card className="p-4 sm:p-6 flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground font-medium">{title}</span>
-        <div className={cn("w-9 h-9 rounded-lg bg-secondary flex items-center justify-center", iconColor)}>
-          <Icon className="w-4 h-4" />
+        <span className="text-xs sm:text-sm text-muted-foreground font-medium">{title}</span>
+        <div className={cn("w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-secondary flex items-center justify-center", iconColor)}>
+          <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </div>
       </div>
-      <div className="text-2xl font-bold tracking-tight">{display(animated)}</div>
+      <div className="text-lg sm:text-2xl font-bold tracking-tight">{display(animated)}</div>
       {subtitle && (
         <div className="text-xs text-muted-foreground">{subtitle}</div>
       )}
