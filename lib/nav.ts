@@ -10,33 +10,54 @@ interface MFApiSearchResult {
  * Resolve an ISIN to an AMFI scheme code via mfapi.in search.
  * Returns the numeric code as a string, or null if not found.
  */
-export async function resolveAmfiCodeFromIsin(isin: string, schemeName: string): Promise<string | null> {
+/**
+ * Validate a candidate amfiCode by fetching its latest NAV and comparing to
+ * the CAS NAV. Returns false if the NAV differs by more than 30% (wrong fund).
+ */
+async function validateAmfiCode(amfiCode: string, casNav: number): Promise<boolean> {
+  if (!casNav || casNav <= 0) return true; // no CAS NAV to validate against
   try {
-    // Search by ISIN first
-    const res = await fetch(`https://api.mfapi.in/mf/search?q=${encodeURIComponent(isin)}`, {
-      next: { revalidate: 86400 },
-    });
-    if (res.ok) {
-      const results: MFApiSearchResult[] = await res.json();
-      if (results?.length) {
-        return String(results[0].schemeCode);
-      }
-    }
-  } catch { /* fall through */ }
+    const res = await fetch(`https://api.mfapi.in/mf/${amfiCode}`, { next: { revalidate: 3600 } });
+    if (!res.ok) return false;
+    const data = await res.json();
+    const latestNav = parseFloat(data?.data?.[0]?.nav ?? "0");
+    if (latestNav <= 0) return false;
+    return Math.abs(latestNav - casNav) / casNav < 0.30; // within 30%
+  } catch {
+    return false;
+  }
+}
 
-  try {
-    // Fallback: search by scheme name (first 40 chars)
-    const query = schemeName.slice(0, 40);
-    const res = await fetch(`https://api.mfapi.in/mf/search?q=${encodeURIComponent(query)}`, {
-      next: { revalidate: 86400 },
-    });
-    if (res.ok) {
+export async function resolveAmfiCodeFromIsin(
+  isin: string,
+  schemeName: string,
+  casNav?: number
+): Promise<string | null> {
+  // Helper: search mfapi.in, validate each result against CAS NAV
+  const searchAndValidate = async (query: string): Promise<string | null> => {
+    try {
+      const res = await fetch(`https://api.mfapi.in/mf/search?q=${encodeURIComponent(query)}`, {
+        next: { revalidate: 86400 },
+      });
+      if (!res.ok) return null;
       const results: MFApiSearchResult[] = await res.json();
-      if (results?.length) {
-        return String(results[0].schemeCode);
+      for (const result of results ?? []) {
+        const code = String(result.schemeCode);
+        if (!casNav || await validateAmfiCode(code, casNav)) {
+          return code;
+        }
       }
-    }
-  } catch { /* ignore */ }
+    } catch { /* ignore */ }
+    return null;
+  };
+
+  // 1. Search by ISIN
+  const byIsin = await searchAndValidate(isin);
+  if (byIsin) return byIsin;
+
+  // 2. Fallback: search by scheme name (first 40 chars)
+  const byName = await searchAndValidate(schemeName.slice(0, 40));
+  if (byName) return byName;
 
   return null;
 }

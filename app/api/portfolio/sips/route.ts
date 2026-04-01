@@ -15,29 +15,30 @@ function detectSIP(
 
   if (purchases.length < 3) return { isSIP: false, monthlyAmount: 0, dayOfMonth: 0 };
 
-  // Check if purchases happen on approximately the same day each month
-  const days = purchases.map((p) => getDate(new Date(p.date)));
-  const avgDay = Math.round(days.reduce((s, d) => s + d, 0) / days.length);
-  const dayVariance = days.every((d) => Math.abs(d - avgDay) <= 5);
-
-  if (!dayVariance || purchases.length < 3) return { isSIP: false, monthlyAmount: 0, dayOfMonth: 0 };
-
-  // Check intervals are roughly monthly
+  // Check intervals are roughly monthly (25–38 days covers BSE holiday shifts)
   let monthlyCount = 0;
   for (let i = 1; i < purchases.length; i++) {
     const diff = differenceInDays(
       new Date(purchases[i].date),
       new Date(purchases[i - 1].date)
     );
-    if (diff >= 25 && diff <= 35) monthlyCount++;
+    if (diff >= 25 && diff <= 38) monthlyCount++;
   }
 
-  if (monthlyCount < purchases.length - 2) return { isSIP: false, monthlyAmount: 0, dayOfMonth: 0 };
+  // Require at least 80% of intervals to be monthly
+  if (monthlyCount < Math.ceil((purchases.length - 1) * 0.8)) {
+    return { isSIP: false, monthlyAmount: 0, dayOfMonth: 0 };
+  }
+
+  // Use median day-of-month (robust to outlier first installment date)
+  const days = purchases.map((p) => getDate(new Date(p.date)));
+  const sorted = [...days].sort((a, b) => a - b);
+  const medianDay = sorted[Math.floor(sorted.length / 2)];
 
   const amounts = purchases.map((p) => p.amount);
   const avgAmount = amounts.reduce((s, a) => s + a, 0) / amounts.length;
 
-  return { isSIP: true, monthlyAmount: avgAmount, dayOfMonth: avgDay };
+  return { isSIP: true, monthlyAmount: avgAmount, dayOfMonth: medianDay };
 }
 
 function futureValue(monthly: number, rate: number, months: number): number {
@@ -81,7 +82,11 @@ export async function GET() {
 
       const sipStart = purchases[0].date;
       const totalInvested = purchases.reduce((s, p) => s + p.amount, 0);
-      const currentNav = navMap.get(fund.amfiCode) ?? 0;
+      const cacheNav = navMap.get(fund.amfiCode);
+      const casNav = fund.currentNav ?? 0;
+      const currentNav = (cacheNav && casNav && Math.abs(cacheNav - casNav) / casNav > 0.30)
+        ? casNav
+        : (cacheNav ?? casNav);
       const currentValue = fund.currentUnits * currentNav;
 
       const monthsElapsed = purchases.length;

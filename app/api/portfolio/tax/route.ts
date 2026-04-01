@@ -93,7 +93,11 @@ export async function GET() {
     }
 
     // Unrealised gains on remaining lots
-    const currentNav = navMap.get(fund.amfiCode) ?? 0;
+    const cacheNav = navMap.get(fund.amfiCode);
+    const casNav = fund.currentNav ?? 0;
+    const currentNav = (cacheNav && casNav && Math.abs(cacheNav - casNav) / casNav > 0.30)
+      ? casNav
+      : (cacheNav ?? casNav);
     let fundUnrealisedGain = 0;
 
     for (const lot of lots) {

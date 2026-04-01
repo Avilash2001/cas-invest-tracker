@@ -57,11 +57,11 @@ export async function GET() {
       }
       units = Math.max(0, units);
 
-      // NAV closest to month end
+      // NAV closest to month end — fall back to CAS closing NAV if no history
       const navEntry =
         history.find((h) => h.date <= monthEnd) ??
         history[history.length - 1];
-      const nav = navEntry?.nav ?? 0;
+      const nav = navEntry?.nav ?? fund.currentNav ?? 0;
       value += units * nav;
     }
 

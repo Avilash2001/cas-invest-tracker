@@ -5,7 +5,7 @@ import Transaction from "@/models/Transaction";
 import Fund from "@/models/Fund";
 import { parseCASPDF } from "@/lib/parsers/cas-pdf";
 import { parseCASExcel } from "@/lib/parsers/cas-excel";
-import { resolveAmfiCodeFromIsin } from "@/lib/nav";
+import { resolveAmfiCodeFromIsin, fetchNAV } from "@/lib/nav";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
         isinToAmfi.set(fund.isin, existing.amfiCode);
         return;
       }
-      const amfi = await resolveAmfiCodeFromIsin(fund.isin, fund.schemeName);
+      const amfi = await resolveAmfiCodeFromIsin(fund.isin, fund.schemeName, fund.currentNav);
       if (amfi) isinToAmfi.set(fund.isin, amfi);
     })
   );
@@ -109,6 +109,25 @@ export async function POST(request: NextRequest) {
       inserted++;
     }
   }
+
+  // Sync NAV cache for all resolved funds (skip ISINs — only numeric amfiCodes work with mfapi)
+  const NavCache = (await import("@/models/NavCache")).default;
+  const now = new Date();
+  await Promise.all(
+    parsed.funds.map(async (fund) => {
+      const amfiCode = isinToAmfi.get(fund.isin) ?? fund.isin;
+      if (/^\d+$/.test(amfiCode)) {
+        const data = await fetchNAV(amfiCode);
+        if (data) {
+          await NavCache.findOneAndUpdate(
+            { amfiCode },
+            { nav: data.nav, navDate: data.navDate, updatedAt: now },
+            { upsert: true }
+          );
+        }
+      }
+    })
+  );
 
   const totalFunds = await Fund.countDocuments({ userId });
   const totalTx = await Transaction.countDocuments({ userId });

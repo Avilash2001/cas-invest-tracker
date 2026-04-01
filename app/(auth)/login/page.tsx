@@ -118,9 +118,9 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-6">
+        {/* <p className="text-center text-xs text-muted-foreground mt-6">
           Single-user app. Use <code className="text-primary">pnpm seed</code> to set credentials.
-        </p>
+        </p> */}
       </div>
     </div>
   );

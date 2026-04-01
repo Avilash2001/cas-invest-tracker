@@ -41,7 +41,11 @@ export async function GET() {
         }
       }
 
-      const currentNav = navMap.get(fund.amfiCode) ?? 0;
+      const cacheNav = navMap.get(fund.amfiCode);
+      const casNav = fund.currentNav ?? 0;
+      const currentNav = (cacheNav && casNav && Math.abs(cacheNav - casNav) / casNav > 0.30)
+        ? casNav
+        : (cacheNav ?? casNav);
       const currentValue = fund.currentUnits * currentNav;
       const avgBuyNAV = totalUnits > 0 ? totalCost / totalUnits : 0;
       const unrealisedPnL = currentValue - invested;

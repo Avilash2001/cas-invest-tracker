@@ -35,7 +35,12 @@ export async function GET() {
     category: f.category || "Equity",
     subCategory: f.subCategory || "",
     fundHouse: f.fundHouse || "Others",
-    value: f.currentUnits * (navMap.get(f.amfiCode) ?? 0),
+    value: (() => {
+      const cNav = navMap.get(f.amfiCode);
+      const casNav = f.currentNav ?? 0;
+      const nav = (cNav && casNav && Math.abs(cNav - casNav) / casNav > 0.30) ? casNav : (cNav ?? casNav);
+      return f.currentUnits * nav;
+    })(),
   })).filter((f) => f.value > 0);
 
   const total = fundValues.reduce((s, f) => s + f.value, 0);

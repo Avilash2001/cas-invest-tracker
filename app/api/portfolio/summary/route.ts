@@ -51,7 +51,12 @@ export async function GET() {
         totalInvested += tx.amount;
       }
     }
-    const nav = navMap.get(fund.amfiCode) ?? 0;
+    const cacheNav = navMap.get(fund.amfiCode);
+    const casNav = fund.currentNav ?? 0;
+    // Sanity check: if cached NAV differs > 30% from CAS NAV, it's likely a wrong fund mapping
+    const nav = (cacheNav && casNav && Math.abs(cacheNav - casNav) / casNav > 0.30)
+      ? casNav
+      : (cacheNav ?? casNav);
     currentValue += fund.currentUnits * nav;
   }
 
