@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { TrendingUp, Upload, Sun, Moon, LogOut, RefreshCw, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "./theme-provider";
@@ -15,6 +16,7 @@ interface NavbarProps {
 
 export function Navbar({ onUpload, lastSynced, userName }: NavbarProps) {
   const { theme, toggle } = useTheme();
+  const router = useRouter();
   const [syncing, setSyncing] = useState(false);
 
   async function handleSync() {
@@ -80,10 +82,14 @@ export function Navbar({ onUpload, lastSynced, userName }: NavbarProps) {
             <Upload className="w-4 h-4" />
           </Button>
 
-          <div className="flex items-center gap-2 ml-1">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
+          <div className="flex items-center gap-1 ml-1">
+            <button
+              onClick={() => router.push("/profile")}
+              title="Profile settings"
+              className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-xs font-bold text-white hover:opacity-80 transition-opacity ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none"
+            >
               {userName?.[0]?.toUpperCase() ?? "A"}
-            </div>
+            </button>
             <Button
               variant="ghost"
               size="icon"
