@@ -58,10 +58,12 @@ export function parseCASExcel(buffer: Buffer): ParsedCAS {
         if (currentAmfiCode && !fundMap.has(currentAmfiCode)) {
           fundMap.set(currentAmfiCode, {
             amfiCode: currentAmfiCode,
+            isin: "",
             schemeName: currentFund,
             fundHouse: currentFund.split(" ").slice(0, 2).join(" "),
             folioNumber: currentFolio,
             currentUnits: 0,
+            currentNav: 0,
           });
         }
       }
@@ -96,6 +98,7 @@ export function parseCASExcel(buffer: Buffer): ParsedCAS {
       result.transactions.push({
         folioNumber: currentFolio,
         fundName: currentFund || sheetName,
+        isin: "",
         amfiCode: currentAmfiCode,
         date: rawDate,
         type: detectType(desc),
