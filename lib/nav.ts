@@ -1,6 +1,46 @@
 import { connectDB } from "./mongodb";
 import NavCache from "@/models/NavCache";
 
+interface MFApiSearchResult {
+  schemeCode: number;
+  schemeName: string;
+}
+
+/**
+ * Resolve an ISIN to an AMFI scheme code via mfapi.in search.
+ * Returns the numeric code as a string, or null if not found.
+ */
+export async function resolveAmfiCodeFromIsin(isin: string, schemeName: string): Promise<string | null> {
+  try {
+    // Search by ISIN first
+    const res = await fetch(`https://api.mfapi.in/mf/search?q=${encodeURIComponent(isin)}`, {
+      next: { revalidate: 86400 },
+    });
+    if (res.ok) {
+      const results: MFApiSearchResult[] = await res.json();
+      if (results?.length) {
+        return String(results[0].schemeCode);
+      }
+    }
+  } catch { /* fall through */ }
+
+  try {
+    // Fallback: search by scheme name (first 40 chars)
+    const query = schemeName.slice(0, 40);
+    const res = await fetch(`https://api.mfapi.in/mf/search?q=${encodeURIComponent(query)}`, {
+      next: { revalidate: 86400 },
+    });
+    if (res.ok) {
+      const results: MFApiSearchResult[] = await res.json();
+      if (results?.length) {
+        return String(results[0].schemeCode);
+      }
+    }
+  } catch { /* ignore */ }
+
+  return null;
+}
+
 interface MFApiResponse {
   meta: {
     scheme_name: string;

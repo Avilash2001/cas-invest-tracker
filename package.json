@@ -32,7 +32,7 @@
     "mongoose": "^9.3.3",
     "next": "^14.2.35",
     "next-auth": "5.0.0-beta.30",
-    "pdf-parse": "^2.4.5",
+    "pdf-parse": "^1.1.1",
     "react": "^18.3.1",
     "react-circular-progressbar": "^2.2.0",
     "react-dom": "^18.3.1",
